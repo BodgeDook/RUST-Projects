@@ -3,7 +3,7 @@ use rand::Rng;
 
 fn main() {
 
-    // enjoy this simple game :) => last stable version is [v1.2.0]
+    // enjoy this simple game :) => last stable version is [v1.2.1]
     start_greeting();
 
     let random_number : i16 = rand::rng().random_range(0..=100);
@@ -54,49 +54,56 @@ fn main() {
         let diff : i16 = guess - random_number;
         let diff_abs : i16 = diff.abs();
 
-        if diff_abs >= 50 {
-            if diff > 0 {
-                println!("Your guess is way too far! Try to get lower.");
-            } else {
-                println!("Your guess is way too far! Try to get higher.");
-            }
-            tries -= 1;
-        } else if 30 <= diff_abs && diff_abs < 50 {
-            if diff > 0 {
-                println!("Your guess is too far! Try to get lower.");
-            } else {
-                println!("Your guess is too far! Try to get higher.");
-            }
-            tries -= 1;
-        } else if 20 <= diff_abs && diff_abs < 30 {
-            if diff > 0 {
-                println!("Your guess is a bit too far! Try to get lower.");
-            } else {
-                println!("Your guess is a bit too far! Try to get higher.");
-            }
-            tries -= 1;
-        } else if 10 <= diff_abs && diff_abs < 20 {
-            if diff > 0 {
-                println!("Your guess is not too far! Try to get lower.");
-            } else {
-                println!("Your guess is not too far! Try to get higher.");
-            }
-            tries -= 1;
-        } else if 0 < diff_abs && diff_abs < 10 {
-            if diff > 0 {
-                println!("Your guess is really close to my number! Try to get lower.");
-            } else {
-                println!("Your guess is really close to my number! Try to get higher.");
-            }
-            tries -= 1;
-        } else {
-            println!("Congratulations! You guessed the number: {random_number}");
-            println!("=======================================================================================");
-            println!("The Game is over. Thanks for the playing!");
-            println!("The number was: {random_number}");
-            println!("Bye!");
+        match diff_abs {
+            50..=100 => {
+                if diff > 0 {
+                    println!("Your guess is way too far! Try to get lower.");
+                } else {
+                    println!("Your guess is way too far! Try to get higher.");
+                }
+                tries -= 1;
+            },
+            30..50 => {
+                if diff > 0 {
+                    println!("Your guess is too far! Try to get lower.");
+                } else {
+                    println!("Your guess is too far! Try to get higher.");
+                }
+                tries -= 1;
+            },
+            20..30 => {
+                if diff > 0 {
+                    println!("Your guess is a bit too far! Try to get lower.");
+                } else {
+                    println!("Your guess is a bit too far! Try to get higher.");
+                }
+                tries -= 1;
+            },
+            10..20 => {
+                if diff > 0 {
+                    println!("Your guess is not too far! Try to get lower.");
+                } else {
+                    println!("Your guess is not too far! Try to get higher.");
+                }
+                tries -= 1;
+            },
+            1..10 => {
+                if diff > 0 {
+                    println!("Your guess is really close to my number! Try to get lower.");
+                } else {
+                    println!("Your guess is really close to my number! Try to get higher.");
+                }
+                tries -= 1;
+            },
+            _ => { // 0
+                println!("Congratulations! You guessed the number: {random_number}");
+                println!("=======================================================================================");
+                println!("The Game is over. Thanks for the playing!");
+                println!("The number was: {random_number}");
+                println!("Bye!");
 
-            break;
+                break;
+            },
         }
 
         if tries == 0 && !second_chance {
