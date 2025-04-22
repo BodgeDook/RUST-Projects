@@ -3,6 +3,7 @@ use rand::Rng;
 
 fn main() {
 
+    // enjoy the simple game :) => last stable version is [v1.1.2]
     start_greeting();
 
     let random_number : i16 = rand::rng().random_range(0..=100);
@@ -81,7 +82,7 @@ fn main() {
             tries -= 1;
         } else {
             println!("Congratulations! You guessed the number: {random_number}");
-            println!("====================================================================");
+            println!("=======================================================================================");
             println!("The Game is over. Thanks for the playing!");
             println!("The number was: {random_number}");
             println!("Bye!");
@@ -90,20 +91,20 @@ fn main() {
         }
 
         if tries == 0 && !second_chance {
-            println!("====================================================================");
+            println!("=======================================================================================");
             println!("It looks like you are out of tries! The game can be over or ...");
-            print!("You want a second chance maybe? But you'll ony have 5 tries for now.");
+            println!("You want a second chance maybe? But you'll ony have 5 tries for now.");
             print!("Write 'yes' or 'no' for your choice: ");
             match io::stdout().flush() {
                 Ok(_) => {},
                 Err(_) => {
-                    println!("====================================================================");
+                    println!("=======================================================================================");
                     println!("Sorry, failed to flush the output! :(");
                     println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
                     start_greeting();
 
                     second_chance = false;
-                    tries = 5;
+                    tries = 10;
                     continue;
                 }
             };
@@ -112,13 +113,13 @@ fn main() {
             match io::stdin().read_line(&mut user_choice) {
                 Ok(_) => {},
                 Err(_) => {
-                    println!("====================================================================");
+                    println!("=======================================================================================");
                     println!("Sorry, failed to read the line of your thought! :(");
                     println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
                     start_greeting();
 
                     second_chance = false;
-                    tries = 5;
+                    tries = 10;
                     continue;
                 }
             };
@@ -126,7 +127,7 @@ fn main() {
             if user_choice.trim().to_lowercase() == "yes" {
                 println!("Great! Let's start from the begining!");
                 second_chance = true;
-                tries = 10;
+                tries = 5;
             } else if user_choice.trim().to_lowercase() == "no" {
                 println!("Ok! So, the real random number was: {random_number}");
                 println!("You can always try again later if you want to.");
@@ -134,14 +135,41 @@ fn main() {
 
                 break;
             } else {
-                println!("...wrong input (exiting the main loop)..."); // will be changed pretty soon ...
-                break;
+
+                /*
+                0 - program's failure
+                1 - user choice is not 'yes'
+                2 - user choice is not 'no'
+                */
+
+                let wants_to_continue : u8 = continue_or_not();
+
+                if wants_to_continue == 1 {
+                    println!("Great! Let's start from the begining!");
+                    second_chance = true;
+                    tries = 5;
+                } else if wants_to_continue == 2 {
+                    println!("Ok! So, the real random number was: {random_number}");
+                    println!("You can always try again later if you want to.");
+                    println!("Bye!");
+
+                    break;
+                } else {
+                    println!("=======================================================================================");
+                    println!("Sorry, something went wrong with your choice! :(");
+                    println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
+                    start_greeting();
+
+                    second_chance = false;
+                    tries = 10;
+                    continue;
+                }
             }
 
         } 
         
         if tries == 0 && second_chance {
-            println!("====================================================================");
+            println!("=======================================================================================");
             println!("Sorry, but you're out of your second chance tries! :(");
             println!("So, the real random number was: {random_number}");
             println!("You can always try again later if you want to.");
@@ -155,6 +183,7 @@ fn main() {
 }
 
 fn start_greeting() {
+    println!("=======================================================================================");
     println!("Welcome to the Randomizer Game!");
     println!("The rules are simple: I thought of a number between 0 and 100 and you have to guess it.");
     println!("You only have 10 tries. Ready? Let's go!");
@@ -173,11 +202,49 @@ fn check_float_guess(guess : f64) -> f64 {
 
 fn check_negative_guess(guess : f64) -> f64 {
     if guess < 0.0 {
-        println!("Actually, it was said about the range of 1 to 100, but you gave me a negative number.");
+        println!("Actually, it was said about the range of 0 to 100, but you gave me a negative number.");
         println!("It will be understood as positive: {guess} -> {}", guess.abs());
 
         return guess.abs();
     }
 
     return guess;
+}
+
+fn continue_or_not() -> u8 {
+
+    println!("Sorry, I expected 'yes' or 'no', but you gave me something else.");
+    print!("Please, write 'yes' or 'no' for your choice: ");
+    match io::stdout().flush() {
+        Ok(_) => {},
+        Err(_) => {
+            return 0;
+        }
+    };
+
+    loop {
+
+        let mut user_choice = String::new();
+        match std::io::stdin().read_line(&mut user_choice) {
+            Ok(_) => {},
+            Err(_) => {
+                return 0;
+            }
+        }
+
+        if user_choice.trim().to_lowercase() == "yes" {
+            return 1;
+        } else if user_choice.trim().to_lowercase() == "no" {
+            return 2;
+        } else {
+            println!("Sorry, I expected 'yes' or 'no', but you gave me something else.");
+            print!("Please, write 'yes' or 'no' for your choice: ");
+            match io::stdout().flush() {
+                Ok(_) => {},
+                Err(_) => {
+                    return 0;
+                }
+            };
+        }
+    }
 }
