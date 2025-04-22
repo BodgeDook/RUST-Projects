@@ -4,10 +4,10 @@ use rand::Rng;
 fn main() {
 
     println!("Welcome to the Randomizer Game!");
-    println!("The rules are simple: I thought of a number between 1 and 100 and you have to guess it.");
+    println!("The rules are simple: I thought of a number between 0 and 100 and you have to guess it.");
     println!("You only have 10 tries. Ready? Let's go!");
 
-    let random_number : i16 = rand::rng().random_range(1..=100);
+    let random_number : i16 = rand::rng().random_range(0..=100);
     let mut second_chance : bool = false;
     let mut tries : u8 = 10;
 
@@ -15,7 +15,7 @@ fn main() {
 
         print!("Please, enter here your guess: ");
         match io::stdout().flush() {
-            Ok(_) => {}
+            Ok(_) => {},
             Err(_) => {
                 println!("Sorry, failed to flush the output! :( [please, try again]");
                 continue;
@@ -24,7 +24,7 @@ fn main() {
 
         let mut guess = String::new();
         match std::io::stdin().read_line(&mut guess) {
-            Ok(_) => {}
+            Ok(_) => {},
             Err(_) => {
                 println!("Sorry, failed to read the line! :( [please, try again]");
                 continue;
@@ -43,7 +43,10 @@ fn main() {
         let diff : i16 = guess - random_number;
         let diff_abs : i16 = diff.abs();
 
-        if diff_abs >= 50 {
+        if guess.abs() > 100 {
+            println!("Your guess is out of my thought random number! Not valid!");
+            tries -= 1;
+        } else if diff_abs >= 50 {
             if diff > 0 {
                 println!("Your guess is way too far! Try to get lower.");
             } else {
@@ -92,12 +95,26 @@ fn main() {
             println!("====================================================================");
             println!("It looks like you are out of tries! The game can be over or ...");
             print!("You want a second chance maybe? Write 'yes' or 'no' for your choice: ");
-            io::stdout().flush().unwrap();
+            match io::stdout().flush() {
+                Ok(_) => {},
+                Err(_) => {
+                    println!("Sorry, failed to flush the output! :(");
+                    println!("Restaring the Game from the last random value I thought of...");
+                    tries = 10;
+                    continue;
+                }
+            };
 
             let mut user_choice = String::new();
-            io::stdin()
-                .read_line(&mut user_choice)
-                .unwrap();
+            match io::stdin().read_line(&mut user_choice) {
+                Ok(_) => {},
+                Err(_) => {
+                    println!("Sorry, failed to read the line of your thought! :(");
+                    println!("Restaring the Game from the last random value I thought of...");
+                    tries = 10;
+                    continue;
+                }
+            };
 
             if user_choice.trim().to_lowercase() == "yes" {
                 println!("Great! Let's start from the begining!");
@@ -110,11 +127,13 @@ fn main() {
 
                 break;
             } else {
-                println!("...wrong input (exiting the main loop)...");
+                println!("...wrong input (exiting the main loop)..."); // will be changed pretty soon ...
                 break;
             }
 
-        } else if tries == 0 && second_chance {
+        } 
+        
+        if tries == 0 && second_chance {
             println!("====================================================================");
             println!("Sorry, but you're out of your second chance tries! :(");
             println!("So, the real random number was: {random_number}");
