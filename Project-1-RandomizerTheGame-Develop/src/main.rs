@@ -138,8 +138,8 @@ fn main() {
 
                 /*
                 0 - program's failure
-                1 - user choice is not 'yes'
-                2 - user choice is not 'no'
+                1 - user choice is 'yes'
+                2 - user choice is 'no'
                 */
 
                 let wants_to_continue : u8 = continue_or_not();
