@@ -3,7 +3,7 @@
 version = 4
 
 [[package]]
-name = "Project-1-RandomizerTheGame"
+name = "Project-1-RandomizerTheGame-Develop"
 version = "1.1.2"
 dependencies = [
  "rand",
