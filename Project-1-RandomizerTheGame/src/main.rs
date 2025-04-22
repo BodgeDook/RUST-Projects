@@ -3,7 +3,7 @@ use rand::Rng;
 
 fn main() {
 
-    // enjoy this simple game :) => last stable version is [v1.1.2]
+    // enjoy this simple game :) => last stable version is [v1.2.0]
     start_greeting();
 
     let random_number : i16 = rand::rng().random_range(0..=100);
@@ -31,7 +31,19 @@ fn main() {
         };
 
         let guess: f64 = match guess.trim().parse::<f64>() {
-            Ok(num) => num,
+            Ok(num) => {
+                if num > 100.0 && !num.is_infinite() {
+                    println!("Your guess is out of my thought random number! Not valid!");
+                    tries -= 1;
+                    continue;
+                } else if num.is_infinite() {
+                    println!("Your guess is a valid number! Error of overflow was avoided!");
+                    tries -= 1;
+                    continue;
+                } else {
+                    num
+                }
+            },
             Err(_) => {
                 println!("Sorry, I expected a number, but you gave me something else :( [please, try again]");
                 continue;
@@ -42,10 +54,7 @@ fn main() {
         let diff : i16 = guess - random_number;
         let diff_abs : i16 = diff.abs();
 
-        if guess > 100 {
-            println!("Your guess is out of my thought random number! Not valid!");
-            tries -= 1;
-        } else if diff_abs >= 50 {
+        if diff_abs >= 50 {
             if diff > 0 {
                 println!("Your guess is way too far! Try to get lower.");
             } else {
