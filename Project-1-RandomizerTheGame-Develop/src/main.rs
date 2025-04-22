@@ -3,7 +3,7 @@ use rand::Rng;
 
 fn main() {
 
-    // enjoy the simple game :) => last stable version is [v1.1.2]
+    // enjoy this simple game :) => last stable version is [v1.1.3]
     start_greeting();
 
     let random_number : i16 = rand::rng().random_range(0..=100);
