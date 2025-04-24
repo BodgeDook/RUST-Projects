@@ -3,7 +3,7 @@ use rand::Rng;
 
 fn main() {
 
-    // enjoy this simple game :) => last stable version is [v1.2.2]
+    // enjoy this simple game :) => last stable version is [v1.2.3]
     start_greeting();
 
     let random_number : i16 = rand::rng().random_range(0..=100);
@@ -32,12 +32,12 @@ fn main() {
 
         let guess: f64 = match guess.trim().parse::<f64>() {
             Ok(num) => {
-                if num > 100.0 && !num.is_infinite() {
+                if (num > 100.0 && !num.is_infinite()) || (num < 0.0 && !num.is_infinite()) {
                     println!("Your guess is out of my thought random number! Not valid!");
                     tries -= 1;
                     continue;
                 } else if num.is_infinite() {
-                    println!("Your guess is a valid number! Error of overflow was avoided!");
+                    println!("Your guess is a valid number! Error of overflow/underflow was avoided!");
                     tries -= 1;
                     continue;
                 } else {
@@ -45,7 +45,8 @@ fn main() {
                 }
             },
             Err(_) => {
-                println!("Sorry, I expected a number, but you gave me something else :( [please, try again]");
+                println!("Sorry, I expected a number, but you gave me something else :( -> -try [please, try again]");
+                tries -= 1;
                 continue;
             }
         };
@@ -59,14 +60,14 @@ fn main() {
         }
 
         if tries == 0 && !second_chance {
-            println!("=======================================================================================");
+            println!("===========================================================================================");
             println!("It looks like you are out of tries! The game can be over or ...");
             println!("You want a second chance maybe? But you'll ony have 5 tries for now.");
             print!("Write 'yes' or 'no' for your choice: ");
             match io::stdout().flush() {
                 Ok(_) => {},
                 Err(_) => {
-                    println!("=======================================================================================");
+                    println!("===========================================================================================");
                     println!("Sorry, failed to flush the output! :(");
                     println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
                     start_greeting();
@@ -81,7 +82,7 @@ fn main() {
             match io::stdin().read_line(&mut user_choice) {
                 Ok(_) => {},
                 Err(_) => {
-                    println!("=======================================================================================");
+                    println!("===========================================================================================");
                     println!("Sorry, failed to read the line of your thought! :(");
                     println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
                     start_greeting();
@@ -123,21 +124,20 @@ fn main() {
 
                     break;
                 } else {
-                    println!("=======================================================================================");
+                    println!("===========================================================================================");
                     println!("Sorry, something went wrong with your choice! :(");
                     println!("Restaring the Game from the last random value I thought of (10 tries restored)...");
                     start_greeting();
 
                     second_chance = false;
                     tries = 10;
-                    continue;
                 }
             }
 
         } 
         
         if tries == 0 && second_chance {
-            println!("=======================================================================================");
+            println!("===========================================================================================");
             println!("Sorry, but you're out of your second chance tries! :(");
             println!("So, the real random number was: {random_number}");
             println!("You can always try again later if you want to.");
@@ -204,7 +204,7 @@ fn check_processed_guess(random_number : i16, diff : i16, diff_abs : i16, tries 
         },
         _ => { // 0
             println!("Congratulations! You guessed the number: {random_number}");
-            println!("=======================================================================================");
+            println!("===========================================================================================");
             println!("The Game is over. Thanks for the playing!");
             println!("The number was: {random_number}");
             println!("Bye!");
@@ -215,10 +215,11 @@ fn check_processed_guess(random_number : i16, diff : i16, diff_abs : i16, tries 
 }
 
 fn start_greeting() {
-    println!("=======================================================================================");
+    println!("===========================================================================================");
     println!("Welcome to the Randomizer Game!");
     println!("The rules are simple: I thought of a number between 0 and 100 and you have to guess it.");
-    println!("You only have 10 tries. Ready? Let's go!");
+    println!("You only have 10 tries. If there's any input/output error, your tries won't be reduced.");
+    println!("Ready? Let's go!");
 }
 
 fn check_float_guess(guess : f64) -> f64 {
