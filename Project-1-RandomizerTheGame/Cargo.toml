@@ -1,7 +1,0 @@
-[package]
-name = "Project-1-RandomizerTheGame"
-version = "1.2.2"
-edition = "2024"
-
-[dependencies]
-rand = "0.9.0"
